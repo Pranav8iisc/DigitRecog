@@ -9,10 +9,16 @@ http://yann.lecun.com/exdb/mnist/
 using namespace std;
 
 class IdxDatasetReader : public DatasetReader
-{
-	
+{	
 	public:
-		readDataset(); 
-		IdxDatasetReader(string)
-		{}
+		
+		unsigned magicNumber;
+		unsigned *sizeOfDimension; // variable sizes array containing size for each of nDimensions
+		unsigned *data; // n X 1 vector where 'n' = nDatasets*nDimensions*PROD(i){sizeOfDimension_{i}}
+		unsigned nDatasets; // number of Datasets in the input idx file
+				
+		getDataset(); 
+		getDatatype();
+		getNumberOfDimensions();
+		getSizeOfDimension();		
 };
