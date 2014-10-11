@@ -29,10 +29,10 @@ idxDatasetReader::isLittleEndian()
 }
 
 
-idxDatasetReader::readDataset(string inputFileName, unsigned nInputDatasets)
+idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 {
 	filename = inputFileName;
-	nDatasets = nInputDatasets; // represents number of datasets inside input file
+	nDatasets = nInputDatasets; 
 	
 	if(this->file.open(fileName) == NULL)
 		{
@@ -40,13 +40,10 @@ idxDatasetReader::readDataset(string inputFileName, unsigned nInputDatasets)
 			exit(0);
 		}
 	
-	// if file contains valid header
-	
-	// magic number
-	unsigned magicNumber;
+	// extract magic number
 	bool isLittleEndian;
 	
-	this->file >> magicNumber;
+	file >> magicNumber;
 		
 	if (isLittleEndian() == true)
 		{
@@ -54,18 +51,83 @@ idxDatasetReader::readDataset(string inputFileName, unsigned nInputDatasets)
 			magicNumber = __builtin_bswap32(magicNumber);
 		}
 	
+	// get datatype
+	char datatypeId; 
+	datatypeId = getDatatype();
 	
+	// get number of dimensions
+	char nDimensions;
+	nDimensions = getNumberOfDimension();
+	
+	// get size of dimensions
+	sizeOfDimension = getSizeOfDimension();
+	
+	unsigned totalSize = getTotalDatasetSize();
 		
-	// if file contains number of bytes as implied by file header
-	
-	// convert data to little-endian format
-	
-	
-	
+	// check if file contains number of bytes as implied by file header
+	if (hasValidFileSize() == false)
+		{
+			cout << "Actual data < data size implied by the header :(";
+			exit(0);			
+		}
+		
+	// read dataset
+	switch(datypeId)
+	{
+		case 0x08:
+		data = new unsigned char[totalDatasetSize];
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			file.get(data[byteId]); 
+		break;
+		
+		case 0x09: 
+		data = new char[totalDatasetSize];
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			file.get(data[byteId]); 
+		break;
+		
+		case 0x0B: 
+		data = new short[totalDatasetSize]; 
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			{
+				file.get(data[byteId]); 
+				data[byteId] = __builtin_bswap16(magicNumber);
+			}
+		break;
+		
+		case 0x0C: 
+		data = new int[totalDatasetSize];
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			{
+				file.get(data[byteId]); 
+				data[byteId] = __builtin_bswap32(magicNumber);
+			}
+		break;
+		
+		case 0x0D: 
+		data = new float[totalDatasetSize];
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			{
+				file.get(data[byteId]); 
+				data[byteId] = __builtin_bswap32(magicNumber);
+			}
+		break;
+		
+		case 0x0E: 
+		data = new double[totalDatasetSize];
+		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+			{
+				file.get(data[byteId]); 
+				data[byteId] = __builtin_bswap64(magicNumber);
+			}
+		break;
+		
+		defualt:
+		cout << "Invalid dataset type specified";
+		exit(0);
+	}	
 	
 	file.close();
-
-
 }
 
 
