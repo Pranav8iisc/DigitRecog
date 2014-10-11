@@ -1,0 +1,9 @@
+*****idxDataSetReader.cxx:*****
+
+# idxDatasetReader::readDataset
+    #1. Portable implementation of checking for Endianess of machine architecture: 
+
+# idxDatasetReader::isLittleEndian
+    #1. Portable conversion of Big endian 32-bit integer to Little endian.
+    
+******************************
