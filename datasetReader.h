@@ -10,8 +10,7 @@ class DatasetReader
 {
 	Public:
 		
-		string fileName;
-	    unsigned nDatasets;
+		string fileName;	    
 		ifstream file;
 		
 	
