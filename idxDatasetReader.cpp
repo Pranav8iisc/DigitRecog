@@ -1,154 +1,77 @@
-#include <iostream>
-#include <fstream>
-#include <opencv/highgui.h>
-
-#define MAX_FILENAME_CHAR 255
+#include <ifstream>
+#include "bigEndianTolittleEndian.h"
+#include "idxDatasetReader.h"
 
 using namespace std;
 
-unsigned nImages;
-unsigned char trainImageData;
-unsigned char trainLabelData;
-unsigned char testImageData;
-unsigned char testLabelData;
-
-/*
------------------------------
------------------------------
-MNIST Image data format:
-
-Magic number(4 bytes, Big endian)
-Number of images(4 bytes)
-Number of rows
-Number of columns
-Pixel
-Pixel
-..
-..
-Pixel
-------------------------------
-------------------------------
-
-------------------------------
-------------------------------
-MNIST Image label format:
-
-Magic number(4 bytes, Big endian)
-Number of items(4)
-Label
-Label
-..
-..
-Label
------------------------------
------------------------------
-*/
-
-
-// reads training image data
-void readTrainingSetImageFile()
-{
-	ifstream trainImageFile("MNISTDataset/train-images.idx3-ubyte", ios::binary);
+idxDatasetReader::idxDatasetReader()
+{	
 	
-	char magicNumber[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		trainImageFile.get(magicNumber[i]); 
-
-	char nImages[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		trainImageFile.get(nImages[i]);
-	
-	unsigned nRows, nColumns, totalPixels;
-
-	totalPixels = nRows * nColumns;
-
-	trainImageData = new char[totalPixels];
-	
-	for (unsigned i = 0; i < totalPixels; i++)
-		trainImageFile.get(trainImageData[i]);
-			
-	trainImageFile.close();
 }
 
-// reads training label data
-void readTrainingSetLabelFile()
+~idxDatasetReader::idxDatasetReader()
 {
-	ifstream trainLabelFile("MNISTDataset/train-label.idx3-ubyte", ios::binary);
 	
-	char magicNumber[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		trainLabelFile.get(magicNumber[i]); 
-
-	char nLabels[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		trainLabelFile.get(nLabels[i]);
-	
-	char labelData = new char[nLabels];
-	
-	for (unsigned i = 0; i < nLabels; i++)
-		trainLabelFile.get(labelData[i]);
-			
-	trainLabelFile.close();
 }
 
-// reads test image data
-void readTestSetImageFile()
+// I suspect this is not portable :(
+// http://stackoverflow.com/questions/280162/is-there-a-way-to-do-a-c-style-compile-time-assertion-to-determine-machines-e
+idxDatasetReader::isLittleEndian()
 {
-	ifstream trainImageFile("MNISTDataset/t10k-images.idx3-ubyte", ios::binary);
+	union {
+	char c[sizeof(int)];
+	int n;
+	} isLittle = 1;
 	
-	char magicNumber[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		testImageFile.get(magicNumber[i]); 
+	if (isLittle[0] == 0x00)
+		return true;
+	else
+		return false;		
+}
 
-	char nImages[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		testImageFile.get(nImages[i]);
-	
-	unsigned nRows, nColumns, totalPixels;
 
-	totalPixels = nRows * nColumns;
-
-	char imageData = new char[totalPixels];
+idxDatasetReader::readDataset(string inputFileName, unsigned nInputDatasets)
+{
+	filename = inputFileName;
+	nDatasets = nInputDatasets; // represents number of datasets inside input file
 	
-	for (unsigned i = 0; i < totalPixels; i++)
-		testImageFile.get(imageData[i]);
-			
-	testImageFile.close();
+	if(this->file.open(fileName) == NULL)
+		{
+			cout << "Invalid filename. Please ensure correct filename is specified";
+			exit(0);
+		}
+	
+	// if file contains valid header
+	
+	// magic number
+	unsigned magicNumber;
+	bool isLittleEndian;
+	
+	this->file >> magicNumber;
+		
+	if (isLittleEndian() == true)
+		{
+			isLittleEndian = true;
+			magicNumber = __builtin_bswap32(magicNumber);
+		}
+	
+	
+		
+	// if file contains number of bytes as implied by file header
+	
+	// convert data to little-endian format
+	
+	
+	
+	
+	file.close();
+
 
 }
 
-// reads test label data
-void readTestSetLabelFile()
-{
-	ifstream trainLabelFile("MNISTDataset/t10k-label.idx3-ubyte", ios::binary);
-	
-	char magicNumber[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		testLabelFile.get(magicNumber[i]); 
 
-	char nLabels[4];
-	
-	for (unsigned i = 0; i < 4; i++)
-		testLabelFile.get(nLabels[i]);
-	
-	char labelData = new char[nLabels];
-	
-	for (unsigned i = 0; i < nLabels; i++)
-		testLabelFile.get(labelData[i]);
-			
-	testLabelFile.close();
-
-}
-
-// for Debugging pupose
-void saveImages()
+// saves dataset in JPEG form
+void idxDatsetReader::saveJPEG()
 {
 	// save training images
 	char fileName[MAX_FILENAME_CHAR];
@@ -162,10 +85,5 @@ void saveImages()
 				opencvImage->ImageData[i] = trainImageData[imageId][i];
 	}
 }
+*/
 
-
-int main()
-{
-	cout << "Please enter number of images"; 
-	return 0;
-}
