@@ -1,12 +1,19 @@
 // defines generic class for reading machine learning datasets
 
 #include <string>
+#include <fstream>
 
 using namespace std;
 
 
 class DatasetReader
 {
-	string fileName;
-	void readDataset(string);		
+	Public:
+		
+		string fileName;
+	    unsigned nDatasets;
+		ifstream file;
+		
+	
+		void readDataset(string);		
 };
