@@ -1,5 +1,4 @@
 #include <ifstream>
-#include "bigEndianTolittleEndian.h"
 #include "idxDatasetReader.h"
 
 using namespace std;
