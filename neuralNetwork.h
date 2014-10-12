@@ -4,26 +4,26 @@ Classes defining generic structures for neural networks. These classes may later
 
 // defines neuron class
 template<class T>
-class neuron
+class Neuron
 {
 	public:
 	
 		T *inputActivation;
 		T outputResponse;
-		neuron *forwardNeighborNeurons;
-		neuron *backwardNeighborNeurons;
+		Neuron *forwardNeighborNeurons;
+		Neuron *backwardNeighborNeurons;
 		
 		void computeActivation();	
 };
 
 // defines the generic neural network
-class neuralNetwork
+class NeuralNetwork
 {
 	public:
 	
-		neuron *inputLayer;
-		neuron **hiddenLayer; // in general there may be arbitrary number of hidden layers
-		neuron *outputLayer;
+		Neuron *inputLayer;
+		Neuron **hiddenLayer; // in general there may be arbitrary number of hidden layers
+		Neuron *outputLayer;
 		
 		unsigned int nInputNeurons;
 		unsigned int* nHiddenNeurons;
