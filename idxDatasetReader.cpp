@@ -1,4 +1,5 @@
 #include <ifstream>
+#include <opencv/highgui.h>
 #include "idxDatasetReader.h"
 
 using namespace std;
