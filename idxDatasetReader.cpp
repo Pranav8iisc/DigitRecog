@@ -55,15 +55,6 @@ unsigned int idxDatasetReader::getNumberOfDatasets()
 	return tempNumberOfDatasets;
 }
 
-// returns total dataset size
-unsigned idxDatasetReader::getTotalDatasetSize(unsigned nDimensions)
-{
-	if (nDimensions > 1)
-	return (file.size() - sizeof(unsigned int) * (nDimensions + 2)); // 1: magic number + 1: number of datasets	
-	else
-	return (file.size() - sizeof(unsigned int) * (nDimensions + 1)); // 1:magic number
-}
-
 unsigned int* idxDatasetReader::getSizeOfDimension()
 {
 
@@ -109,8 +100,13 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 	for (unsigned i = 0; i < nDimensions; i++)
 		predictedDatasetSize *= sizeOfDimension[i];
 		
-	unsigned actualDatasetSize = getTotalDatasetSize();
+	unsigned actualDatasetSize;
 	
+	if (nDimensions > 1)
+		actualDatasetSize = file.size() - sizeof(unsigned int) * (nDimensions + 2); // 1: magic number + 1: number of datasets	
+	else
+		actualDatasetSize = return (file.size() - sizeof(unsigned int) * (nDimensions + 1)); // 1:magic number
+		
 	bool hasValidFileSize = (predictedDatasetSize == actualDatasetSize) ? true : false;
 			
 	// check if file contains number of bytes as implied by file header
