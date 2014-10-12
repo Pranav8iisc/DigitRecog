@@ -28,5 +28,5 @@ class IdxDatasetReader : public DatasetReader
 		unsigned* int getSizeOfDimension();	
 		unsigned int getNumberOfDatasets();
 		unsigned int getTotalDatasetSize(unsigned int);		
-		void saveJPEG(bool datasetType); // 0: training dataset, 1: test dataset
+		void saveJPEG(bool); // 0: training dataset, 1: test dataset
 };
