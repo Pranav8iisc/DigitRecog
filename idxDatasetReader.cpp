@@ -185,16 +185,20 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 void idxDatsetReader::saveJPEG()
 {
 	// save training images
-	char fileName[MAX_FILENAME_CHAR];
-	
-	Iplimage opencvImage = cvCreateImage(cvSize(nRows, nColumns), IPL_DEPTH_8U, 1);
-	
-	for (unsigned imageId = 0; imageId < nImages; imageId++)
+	if(nDimensions == 2)
 	{
-		sprintf(fileName, "MNISTDataset/trainImages/%i.jpg", imageId);
-			for (unsigned i = 0; i < nPixels; i++)
-				opencvImage->ImageData[i] = trainImageData[imageId][i];
+		char fileName[MAX_FILENAME_CHAR];	
+		unsigned int nPixels = sizeOfDimension[0] * sizeOfDimension[1];		
+		IplImage opencvImage = cvCreateImage(cvSize(sizeOfDimension[0], sizeOfDimension[1]), IPL_DEPTH_8U, 1);		
+		
+		for (unsigned int imageId = 0; imageId < nDatasets; imageId++)
+			{
+				sprintf(fileName, "MNISTDataset/trainImages/%i.jpg", imageId);
+				for (unsigned i = 0; i < nPixels; i++)
+					opencvImage->ImageData[i] = data[imageId][i];			
+				cvSaveImage(fileName, opencvImage);
+			}
 	}
+	else
+	cout << "Sorry, not a image dataset :(";
 }
-
-
