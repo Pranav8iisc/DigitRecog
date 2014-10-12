@@ -12,19 +12,20 @@ class IdxDatasetReader : public DatasetReader
 {	
 	public:
 		
-		unsigned magicNumber;
-		unsigned *sizeOfDimension; // variable sizes array containing size for each of nDimensions
-		unsigned *data; // n X 1 vector where 'n' = nDatasets*nDimensions*PROD(i){sizeOfDimension_{i}}, stored in row-major order
-		unsigned nDatasets; // number of Datasets in the input idx file
+		unsigned unsigned magicNumber;
+		unsigned int *sizeOfDimension; // variable sizes array containing size for each of nDimensions
+		unsigned int *data; // n X 1 vector where 'n' = nDatasets*nDimensions*PROD(i){sizeOfDimension_{i}}, stored in row-major order
+		unsigned int nDatasets; // number of Datasets in the input idx file
 				
-		getDataset(string, unsigned); 
+		void getDataset(string, unsigned); 
 		
 		
 	protected:
 	
+		unsigned int getMagicNumber
 		char getDatatype();
-		unsigned getNumberOfDimensions();
-		unsigned* getSizeOfDimension();	
-		unsigned getTotalSizeData;
-		bool hasValidFileSize(); 
+		unsigned int getNumberOfDimensions();
+		unsigned* int getSizeOfDimension();	
+		unsigned int getNumberOfDatasets();
+		unsigned int getTotalDatasetSize(unsigned int);		
 };
