@@ -15,7 +15,7 @@ idxDatasetReader::idxDatasetReader()
 
 // I suspect this is not portable :(
 // http://stackoverflow.com/questions/280162/is-there-a-way-to-do-a-c-style-compile-time-assertion-to-determine-machines-e
-idxDatasetReader::isLittleEndian()
+bool idxDatasetReader::isLittleEndian()
 {
 	union {
 	char c[sizeof(int)];
@@ -28,8 +28,7 @@ idxDatasetReader::isLittleEndian()
 		return false;		
 }
 
-
-idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
+void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 {
 	filename = inputFileName;
 	nDatasets = nInputDatasets; 
