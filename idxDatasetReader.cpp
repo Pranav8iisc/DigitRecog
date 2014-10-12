@@ -28,6 +28,24 @@ bool idxDatasetReader::isLittleEndian()
 		return false;		
 }
 
+// returns extracted datatype id from the magic number
+char idxDatasetReader::getDatatype()
+{
+	return (magicNumber >> 8) & 0xFF; // the second MSB
+}
+
+// returns the extracted number of dimensions from the magic number
+char idxDatasetReader::getNumberOfDimensions()
+{
+	return (magicNumber & 0xFF);
+}
+
+// returns total dataset size
+unsigned idxDatasetReader::getTotalDatasetSize()
+{
+
+}
+
 void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 {
 	filename = inputFileName;
@@ -71,22 +89,22 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 		}
 		
 	// read dataset
-	switch(datypeId)
+	switch(datatypeId)
 	{
 		case 0x08:
-		data = new unsigned char[totalDatasetSize];
+		data = new unsigned char[nDatasets][totalDatasetSize];
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			file.get(data[byteId]); 
 		break;
 		
 		case 0x09: 
-		data = new char[totalDatasetSize];
+		data = new char[nDatasets][totalDatasetSize];
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			file.get(data[byteId]); 
 		break;
 		
 		case 0x0B: 
-		data = new short[totalDatasetSize]; 
+		data = new short[nDatasets][totalDatasetSize]; 
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			{
 				file.get(data[byteId]); 
@@ -95,7 +113,7 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 		break;
 		
 		case 0x0C: 
-		data = new int[totalDatasetSize];
+		data = new int[nDatasets][totalDatasetSize];
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			{
 				file.get(data[byteId]); 
@@ -104,7 +122,7 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 		break;
 		
 		case 0x0D: 
-		data = new float[totalDatasetSize];
+		data = new float[nDatasets][totalDatasetSize];
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			{
 				file.get(data[byteId]); 
@@ -113,7 +131,7 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 		break;
 		
 		case 0x0E: 
-		data = new double[totalDatasetSize];
+		data = new double[nDatasets][totalDatasetSize];
 		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			{
 				file.get(data[byteId]); 
