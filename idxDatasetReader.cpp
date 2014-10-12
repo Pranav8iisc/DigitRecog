@@ -46,9 +46,12 @@ char idxDatasetReader::getNumberOfDimensions()
 	return (magicNumber & 0xFF);
 }
 
-unsigned idxDatasetReader::getNumberOfDatasets()
+unsigned int idxDatasetReader::getNumberOfDatasets()
 {
-	return file >> nDatasets;
+	unsigned int tempNumberOfDatasets;
+	file >> tempNumberOfDatasets;
+	
+	return tempNumberOfDatasets;
 }
 
 // returns total dataset size
@@ -94,7 +97,9 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 	sizeOfDimension = getSizeOfDimension();	
 	
 	// size of dataset as implied by file header:
-	unsigned predictedDatasetSize = 1;
+	unsigned nDatasets = getNumberOfDatasets();
+	
+	unsigned predictedDatasetSize = nDatasets;
 	
 	for (unsigned i = 0; i < nDimensions; i++)
 		predictedDatasetSize *= sizeOfDimension[i];
@@ -113,51 +118,57 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 	// read dataset
 	switch(datatypeId)
 	{
-		case 0x08:
-		data = new unsigned char[nDatasets][totalDatasetSize];
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
-			file.get(data[byteId]); 
+		case 0x08:		
+		data = new unsigned char[nDatasets][actualDatasetSize];
+		for(unsigned datasetId = 0; datasetId < nDatasets; datasetId++)
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+				file.get(data[datasetId][byteId]); 
 		break;
 		
 		case 0x09: 
-		data = new char[nDatasets][totalDatasetSize];
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
-			file.get(data[byteId]); 
+		data = new char[nDatasets][actualDatasetSize];
+		for(unsigned datasetId = 0; datasetId < nDatasets; datasetId++)
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+				file.get(data[datasetId][byteId]); 
 		break;
 		
 		case 0x0B: 
 		data = new short[nDatasets][totalDatasetSize]; 
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
-			{
-				file.get(data[byteId]); 
-				data[byteId] = __builtin_bswap16(magicNumber);
-			}
+		for (unsigned datasetId = 0; datasetId < nDatasets; datasetId++)
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+				{
+					file.get(data[datasetId][byteId]); 
+					data[datasetId][byteId] = __builtin_bswap16(magicNumber);
+				}
 		break;
 		
 		case 0x0C: 
 		data = new int[nDatasets][totalDatasetSize];
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
-			{
-				file.get(data[byteId]); 
-				data[byteId] = __builtin_bswap32(magicNumber);
-			}
+		for (unsigned datasetId = 0; datasetId < nDatasets; datasetId++)
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+				{
+					file.get(data[datasetId][byteId]); 
+					data[datasetId][byteId] = __builtin_bswap32(magicNumber);
+				}
 		break;
 		
 		case 0x0D: 
 		data = new float[nDatasets][totalDatasetSize];
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
-			{
-				file.get(data[byteId]); 
-				data[byteId] = __builtin_bswap32(magicNumber);
-			}
+		for (unsigned datasetId = 0; datasetId < nDatasets; datasetId++)
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+				{
+					file.get(data[datasetId][byteId]); 
+					data[datasetId][byteId] = __builtin_bswap32(magicNumber);
+				}
 		break;
 		
 		case 0x0E: 
 		data = new double[nDatasets][totalDatasetSize];
-		for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
+		for (unsigned datasetId = 0; datasetId < nDatasets; datasetId++)			
+			for (unsigned byteId = 0; byteId < totalDatasetSize; byteId++)
 			{
-				file.get(data[byteId]); 
-				data[byteId] = __builtin_bswap64(magicNumber);
+				file.get(data[datasetId][byteId]); 
+				data[datasetId][byteId] = __builtin_bswap64(magicNumber);
 			}
 		break;
 		
@@ -185,5 +196,5 @@ void idxDatsetReader::saveJPEG()
 				opencvImage->ImageData[i] = trainImageData[imageId][i];
 	}
 }
-*/
+
 
