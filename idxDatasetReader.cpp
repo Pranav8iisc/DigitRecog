@@ -199,12 +199,13 @@ void idxDatsetReader::saveJPEG(bool datasetType)
 		for (unsigned int imageId = 0; imageId < nDatasets; imageId++)
 			{
 				if (datasetType == 0)
-				sprintf(fileName, "MNISTDataset/trainImages/%i.jpg", imageId);
+					sprintf(fileName, "MNISTDataset/trainImages/%i.jpg", imageId);
 				else
-				sprintf(fileName, "MNISTDataset/testImages/%i.jpg", imageId);
+					sprintf(fileName, "MNISTDataset/testImages/%i.jpg", imageId);
 				
 				for (unsigned i = 0; i < nPixels; i++)
-					opencvImage->ImageData[i] = data[imageId][i];			
+					opencvImage->ImageData[i] = data[imageId][i];	
+					
 				cvSaveImage(fileName, opencvImage);
 			}
 	}
