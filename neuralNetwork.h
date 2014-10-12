@@ -1,6 +1,9 @@
 /*
 Classes defining generic structures for neural networks. These classes may later be specialized to instantiate different types of networks.
 */
+#include <list>
+
+using namespace std;
 
 // defines neuron class
 template<class T>
@@ -8,11 +11,16 @@ class Neuron
 {
 	public:
 	
+		unsigned int neuronId;
 		T *inputActivation;
 		T outputResponse;
-		Neuron *forwardNeighborNeurons;
-		Neuron *backwardNeighborNeurons;
+		list<Neuron*> forwardNeighborNeurons;
+		list<Neuron*> backwardNeighborNeurons;
 		
+		Neuron()
+		{
+			outputActivation = (class T) 0;
+		}
 		void computeActivation();	
 };
 
@@ -21,10 +29,10 @@ class NeuralNetwork
 {
 	public:
 	
-		Neuron *inputLayer;
-		Neuron **hiddenLayer; // in general there may be arbitrary number of hidden layers
-		Neuron *outputLayer;
-		
+		list<Neuron*> inputLayer;
+		Neuron** hiddenLayer; // in general there may be arbitrary number of hidden layers
+		list<Neuron*> outputLayer;
+			
 		unsigned int nInputNeurons;
 		unsigned int* nHiddenNeurons;
 		unsigned int nOutputNeurons;
