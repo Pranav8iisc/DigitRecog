@@ -28,6 +28,12 @@ bool idxDatasetReader::isLittleEndian()
 		return false;		
 }
 
+unsigned int idxDatasetReadr::getMagicNumber()
+{
+	unsigned int tempMagicNumber;	
+	return (file >> tempMagicNumber);
+}
+
 // returns extracted datatype id from the magic number
 char idxDatasetReader::getDatatype()
 {
@@ -40,17 +46,25 @@ char idxDatasetReader::getNumberOfDimensions()
 	return (magicNumber & 0xFF);
 }
 
-// returns total dataset size
-unsigned idxDatasetReader::getTotalDatasetSize()
+unsigned idxDatasetReader::getNumberOfDatasets()
 {
-
+	return file >> nDatasets;
 }
+
+// returns total dataset size
+unsigned idxDatasetReader::getTotalDatasetSize(unsigned nDimensions)
+{
+	if (nDimensions > 1)
+	return (file.size() - sizeof(unsigned int) * (nDimensions + 2)); // 1: magic number + 1: number of datasets	
+	else
+	return (file.size() - sizeof(unsigned int) * (nDimensions + 1)); // 1:magic number
+}
+
 
 void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 {
 	filename = inputFileName;
-	nDatasets = nInputDatasets; 
-	
+		
 	if(this->file.open(fileName) == NULL)
 		{
 			cout << "Invalid filename. Please ensure correct filename is specified";
@@ -58,9 +72,9 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 		}
 	
 	// extract magic number
-	bool isLittleEndian;
+	magicNumber = getMagicNumber();
 	
-	file >> magicNumber;
+	bool isLittleEndian;
 		
 	if (isLittleEndian() == true)
 		{
@@ -75,14 +89,22 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 	// get number of dimensions
 	char nDimensions;
 	nDimensions = getNumberOfDimension();
-	
-	// get size of dimensions
-	sizeOfDimension = getSizeOfDimension();
-	
-	unsigned totalSize = getTotalDatasetSize();
 		
+	// get size of dimensions
+	sizeOfDimension = getSizeOfDimension();	
+	
+	// size of dataset as implied by file header:
+	unsigned predictedDatasetSize = 1;
+	
+	for (unsigned i = 0; i < nDimensions; i++)
+		predictedDatasetSize *= sizeOfDimension[i];
+		
+	unsigned actualDatasetSize = getTotalDatasetSize();
+	
+	bool hasValidFileSize = (predictedDatasetSize == actualDatasetSize) ? true : false;
+			
 	// check if file contains number of bytes as implied by file header
-	if (hasValidFileSize() == false)
+	if (hasValidFileSize == false)
 		{
 			cout << "Actual data < data size implied by the header :(";
 			exit(0);			
