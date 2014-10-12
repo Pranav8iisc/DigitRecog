@@ -6,4 +6,7 @@
 # idxDatasetReader::isLittleEndian
     #1. Portable conversion of Big endian 32-bit integer to Little endian.
     
+# idxDatasetReader::getSizeOfDimension
+    #1. Define the function.
+    
 ******************************
