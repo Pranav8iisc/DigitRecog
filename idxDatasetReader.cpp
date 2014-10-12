@@ -63,6 +63,10 @@ unsigned idxDatasetReader::getTotalDatasetSize(unsigned nDimensions)
 	return (file.size() - sizeof(unsigned int) * (nDimensions + 1)); // 1:magic number
 }
 
+unsigned int* idxDatasetReader::getSizeOfDimension()
+{
+
+}
 
 void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 {
@@ -182,18 +186,23 @@ void idxDatasetReader::getDataset(string inputFileName, unsigned nInputDatasets)
 
 
 // saves dataset in JPEG form
-void idxDatsetReader::saveJPEG()
+void idxDatsetReader::saveJPEG(bool datasetType)
 {
 	// save training images
 	if(nDimensions == 2)
 	{
+		unsigned nDatasets = getNumberOfDatasets();
 		char fileName[MAX_FILENAME_CHAR];	
 		unsigned int nPixels = sizeOfDimension[0] * sizeOfDimension[1];		
 		IplImage opencvImage = cvCreateImage(cvSize(sizeOfDimension[0], sizeOfDimension[1]), IPL_DEPTH_8U, 1);		
 		
 		for (unsigned int imageId = 0; imageId < nDatasets; imageId++)
 			{
+				if (datasetType == 0)
 				sprintf(fileName, "MNISTDataset/trainImages/%i.jpg", imageId);
+				else
+				sprintf(fileName, "MNISTDataset/testImages/%i.jpg", imageId);
+				
 				for (unsigned i = 0; i < nPixels; i++)
 					opencvImage->ImageData[i] = data[imageId][i];			
 				cvSaveImage(fileName, opencvImage);
